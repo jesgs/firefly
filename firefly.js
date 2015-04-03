@@ -38,7 +38,6 @@ var Firefly = function(pos)
     this.pixel         = pos;
     this.count         = 0;
     this.color         = colors[ Math.round( Math.random() * (colors.length - 1)) ];
-
 };
 
 
@@ -100,7 +99,7 @@ Firefly.prototype.pause = function() {
 Firefly.prototype.debug = function()
 {
     console.log(
-        "Parent Interval" + (this.parentInterval / 1000).toString() + " secs | ",
+        "Parent Interval: " + (this.parentInterval / 1000).toString() + " secs | ",
         "Flash Interval: " + (this.blinkInterval / 1000).toString() + " secs | ",
         "Flash Rate: " + Math.round(this.blinks / 2).toString() + " flashes | ",
         "Pixel: " + this.pixel
