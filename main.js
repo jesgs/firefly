@@ -1,6 +1,5 @@
 var Firefly = require('./firefly'),
-    tools   = require('./utilities'),
-    numPixels   = 50;
+    tools   = require('./utilities');
 
 
 var fireflyTimer = setInterval(runFirefly, 1000); // initial interval, changes while program is running
@@ -14,17 +13,16 @@ function runFirefly()
         clearInterval(fireflyTimer);
     }
     
-    var interval = tools.getRandomArbitrary(3000, 20000);
-    
-    // attach parent interval for debugging
-    Firefly.prototype.parentInterval = interval
+    var interval = tools.getRandomArbitrary(3000, 20000),
+        fly = new Firefly();
 
-    var pos = Math.round( Math.random() * numPixels),
-        fly = new Firefly(pos);
-    
-    fly.start();
-    fly.pause();
-    fly.debug();
+    // attach parent interval for debugging
+    fly.setParentInterval(interval);
+
+    fly.setup()
+       .start()
+       .pause()
+       .debug();
         
     // start a new timer
     fireflyTimer = setInterval(runFirefly, interval);

@@ -25,19 +25,25 @@ var OPC         = new require('./opc'),
  * @param {number} pos Pixel position
  * @constructor
  */
-var Firefly = function(pos)
+var Firefly = function()
 {
+    this.setup();
+};
+
+
+/**
+ * Setup object
+ */
+Firefly.prototype.setup = function() {
     this.off();
-    
-    if (typeof(this.parentInterval) === 'undefined') {
-        this.parentInterval = 1000; // baseline interval
-    }
-    
-    this.blinkInterval = tools.getRandomArbitrary(100, 500);
-    this.blinks        = tools.getRandomArbitrary(1, 10);
-    this.pixel         = pos;
+
     this.count         = 0;
-    this.color         = colors[ Math.round( Math.random() * (colors.length - 1)) ];
+    this.blinkInterval = tools.getRandomArbitrary(100, 500);
+    this.setBlinkRate(tools.getRandomArbitrary(1, 10));
+    this.setColor(colors[ Math.round( Math.random() * (colors.length - 1)) ]);
+    this.setPixel(Math.round( Math.random() * numPixels));
+
+    return this;
 };
 
 
@@ -58,6 +64,8 @@ Firefly.prototype.off = function() {
  */
 Firefly.prototype.start = function() {
     this.blinkTimer    = setInterval(this.flash.bind(this), this.blinkInterval);
+
+    return this;
 };
 
 
@@ -65,24 +73,28 @@ Firefly.prototype.start = function() {
  * Flash the pixel
  */
 Firefly.prototype.flash = function() {
-    if (this.count > this.blinks) {
+    var blink = this.getBlinkRate();
+    if (this.count > blink) {
         clearInterval(this.blinkTimer);
         this.count = 0;
     }
 
-    var r = this.color[0],
-        g = this.color[1],
-        b = this.color[2];
+    var pixel = this.getPixel(),
+        color = this.getColor(),
+        r = color[0],
+        g = color[1],
+        b = color[2];
 
     if (this.count % 2) {
-        client.setPixel(this.pixel, r, g, b);
+        client.setPixel(pixel, r, g, b);
     } else {
-        client.setPixel(this.pixel, 0, 0, 0);
+        client.setPixel(pixel, 0, 0, 0);
     }
 
     client.writePixels();
     this.count++;
 };
+
 
 /**
  * Brief pause before next pixel
@@ -90,6 +102,7 @@ Firefly.prototype.flash = function() {
 Firefly.prototype.pause = function() {
     // pause
     setTimeout(function(){}, 500);
+    return this;
 };
 
 
@@ -99,12 +112,87 @@ Firefly.prototype.pause = function() {
 Firefly.prototype.debug = function()
 {
     console.log(
-        "Parent Interval: " + (this.parentInterval / 1000).toString() + " secs | ",
+        "Parent Interval: " + (this.getParentInterval() / 1000).toString() + " secs | ",
         "Flash Interval: " + (this.blinkInterval / 1000).toString() + " secs | ",
-        "Flash Rate: " + Math.round(this.blinks / 2).toString() + " flashes | ",
-        "Pixel: " + this.pixel
+        "Flash Rate: " + Math.round(this.getBlinkRate() / 2).toString() + " flashes | ",
+        "Pixel: " + this.getPixel()
     );
+
+    return this;
 };
 
+
+/**
+ * Return the current color
+ *
+ * @returns {*}
+ */
+Firefly.prototype.getColor = function() {
+    return this.color;
+};
+
+
+/**
+ * Set pixel color
+ *
+ * @param {array} color Color array. RGB represented by [100, 100, 100]
+ */
+Firefly.prototype.setColor = function(color) {
+    this.color = color;
+};
+
+
+/**
+ * Get current blink-rate
+ * @returns {number|*}
+ */
+Firefly.prototype.getBlinkRate = function() {
+    return this.blinks;
+};
+
+
+/**
+ * Set blink-rate
+ * @param blinkRate
+ */
+Firefly.prototype.setBlinkRate = function(blinkRate) {
+    this.blinks = blinkRate;
+};
+
+
+/**
+ * Get current pixel
+ * @returns {number|*}
+ */
+Firefly.prototype.getPixel = function() {
+    return this.pixel;
+};
+
+
+/**
+ * Set current pixel
+ * @param pixel
+ */
+Firefly.prototype.setPixel = function(pixel) {
+    this.pixel = pixel;
+};
+
+
+/**
+ * Return parent interval
+ * @returns {Firefly.parentInterval|*}
+ */
+Firefly.prototype.getParentInterval = function() {
+    return this.parentInterval;
+};
+
+
+/**
+ * Set parent interval
+ * @param interval
+ */
+Firefly.prototype.setParentInterval = function(interval) {
+    this.parentInterval = interval;
+};
 
 module.exports = Firefly;
