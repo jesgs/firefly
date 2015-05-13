@@ -1,7 +1,6 @@
 var OPC         = new require('./opc'),
-    client      = new OPC('localhost', 7890),
+    client      = new OPC('firefly.local', 7890),
     tools       = require('./utilities'),
-    numPixels   = 50,
     colors = [
         [255, 26, 24], // red
         [255, 155, 125], // red
@@ -22,7 +21,6 @@ var OPC         = new require('./opc'),
 /**
  * Firefly object
  *
- * @param {number} pos Pixel position
  * @constructor
  */
 var Firefly = function()
@@ -35,13 +33,10 @@ var Firefly = function()
  * Setup object
  */
 Firefly.prototype.setup = function() {
-    this.off();
-
     this.count         = 0;
     this.blinkInterval = tools.getRandomArbitrary(100, 500);
     this.setBlinkRate(tools.getRandomArbitrary(1, 10));
     this.setColor(colors[ Math.round( Math.random() * (colors.length - 1)) ]);
-    this.setPixel(Math.round( Math.random() * numPixels));
 
     return this;
 };
@@ -50,9 +45,9 @@ Firefly.prototype.setup = function() {
 /**
  * Turn off all pixels
  */
-Firefly.prototype.off = function() {
-    //turn off all pixels
-    for (var i = 0; i < numPixels; i++) {
+Firefly.off = function(totalPixels) {
+    // turn off all pixels
+    for (var i = 0; i < totalPixels; i++) {
         client.setPixel(i, 0, 0, 0);
     }
     client.writePixels();
